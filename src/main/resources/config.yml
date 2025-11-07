@@ -1,0 +1,4 @@
+# WebInv Konfiguration
+# ====================
+# Port für den eingebauten Webserver
+port: 8080
