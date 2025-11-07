@@ -23,8 +23,7 @@ public class WebInv extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        FileConfiguration cfg = getConfig();
-        int port = cfg.getInt("port", 8080);
+        int port = getConfig().getInt("port", 8080);
 
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -88,29 +87,22 @@ public class WebInv extends JavaPlugin {
         if (playerName == null) { sendJson(ex, Map.of("error", "missing player")); return; }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-        ItemStack[] inv;
-
-        if (type.equals("enderchest")) {
-            inv = player.isOnline() ? player.getPlayer().getEnderChest().getContents() : new ItemStack[27];
-        } else {
-            inv = player.isOnline() ? player.getPlayer().getInventory().getContents() : new ItemStack[36];
-        }
+        ItemStack[] inv = type.equals("enderchest")
+                ? (player.isOnline() ? player.getPlayer().getEnderChest().getContents() : new ItemStack[27])
+                : (player.isOnline() ? player.getPlayer().getInventory().getContents() : new ItemStack[36]);
 
         Map<Integer, Map<String, Object>> slots = new HashMap<>();
         for (int i = 0; i < inv.length; i++) {
             ItemStack item = inv[i];
             if (item != null) {
                 Map<String, Object> info = new HashMap<>();
-                info.put("type", item.getType().name());
+                info.put("type", item.getType().name().toLowerCase());
                 info.put("amount", item.getAmount());
                 slots.put(i, info);
             }
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("slots", slots);
-        response.put("online", player.isOnline());
-        sendJson(ex, response);
+        sendJson(ex, Map.of("slots", slots, "online", player.isOnline()));
     }
 
     private void handleUpdate(HttpExchange ex) throws IOException {
@@ -131,7 +123,11 @@ public class WebInv extends JavaPlugin {
         if (itemData != null) {
             String mat = (String) itemData.get("type");
             int amount = ((Number) itemData.get("amount")).intValue();
-            item = new ItemStack(org.bukkit.Material.valueOf(mat), amount);
+            try {
+                item = new ItemStack(org.bukkit.Material.valueOf(mat.toUpperCase()), amount);
+            } catch (IllegalArgumentException e) {
+                getLogger().warning("Unknown material: " + mat);
+            }
         }
 
         if (player.isOnline()) {

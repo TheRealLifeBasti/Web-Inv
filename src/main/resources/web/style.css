@@ -1,65 +1,165 @@
 body {
-  background: #121212;
-  color: #fff;
-  font-family: "Segoe UI", Roboto, sans-serif;
-  text-align: center;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  max-width: 800px;
+  width: 100%;
   padding: 20px;
 }
 
-.menu {
-  margin-top: 20px;
+.player-selection {
+  text-align: center;
+  margin-bottom: 30px;
 }
 
-select, button {
-  background: #222;
-  color: #fff;
+#playerSelect {
+  background: #2d2d2d;
+  color: #ffffff;
+  border: 2px solid #404040;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 250px;
+  transition: all 0.3s ease;
+}
+
+#playerSelect:hover {
+  border-color: #606060;
+  box-shadow: 0 0 15px rgba(96, 96, 96, 0.3);
+}
+
+#playerSelect:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
+}
+
+.inventory-section {
+  background: #252525;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.inventory-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tab-button {
+  background: #3d3d3d;
+  color: #cccccc;
   border: none;
   border-radius: 6px;
-  padding: 8px 14px;
+  padding: 10px 20px;
   font-size: 14px;
   cursor: pointer;
-  transition: box-shadow 0.15s ease, transform 0.1s ease, background 0.15s ease;
-  margin: 6px;
+  transition: all 0.3s ease;
 }
 
-select:hover, button:hover {
-  box-shadow: 0 0 12px rgba(0,140,255,0.6);
-  transform: translateY(-1px);
+.tab-button:hover {
+  background: #454545;
+  color: #ffffff;
 }
 
-button:active {
-  box-shadow: 0 0 14px rgba(150,0,255,0.8);
-  background: #2a0047;
-  transform: translateY(1px);
+.tab-button.active {
+  background: #007bff;
+  color: #ffffff;
 }
 
-.inv {
+.inventory-grid {
   display: grid;
   grid-template-columns: repeat(9, 48px);
-  gap: 5px;
+  gap: 8px;
   justify-content: center;
-  margin: 25px auto;
 }
 
 .slot {
   width: 48px;
   height: 48px;
-  background: #2b2b2b;
+  background: #2d2d2d;
+  border: 2px solid #404040;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, transform 0.1s ease;
+  position: relative;
+  transition: all 0.2s ease;
+  cursor: grab;
 }
 
 .slot:hover {
-  background: #333;
+  background: #353535;
+  border-color: #505050;
   transform: scale(1.05);
+  z-index: 10;
+}
+
+.slot.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
 }
 
 .slot img {
   width: 32px;
   height: 32px;
   pointer-events: none;
+  image-rendering: pixelated;
+  transition: transform 0.2s ease;
+}
+
+.slot:hover img {
+  transform: scale(1.1);
+}
+
+.item-count {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 1px 3px;
+  border-radius: 3px;
+  pointer-events: none;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
+}
+
+.slot.empty {
+  background: #1a1a1a;
+  border: 2px dashed #404040;
+}
+
+.item-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.slot:hover .item-tooltip {
+  opacity: 1;
 }

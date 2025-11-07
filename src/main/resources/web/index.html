@@ -2,19 +2,24 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>MC Inventar Manager</title>
+    <title>WebInv - Minecraft Inventory Manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="menu">
-    <select id="playerSelect"></select>
-</div>
+<div class="container">
+    <div class="player-selection">
+        <select id="playerSelect">
+            <option value="">Spieler auswählen...</option>
+        </select>
+    </div>
 
-<div id="inventory" class="inv"></div>
-
-<div class="menu">
-    <button onclick="loadInventory('inventory')">Inventar</button>
-    <button onclick="loadInventory('enderchest')">Enderchest</button>
+    <div class="inventory-section">
+        <div class="inventory-tabs">
+            <button class="tab-button active" onclick="switchTab('inventory')">Inventar</button>
+            <button class="tab-button" onclick="switchTab('enderchest')">Endertruhe</button>
+        </div>
+        <div id="inventory" class="inventory-grid"></div>
+    </div>
 </div>
 
 <script src="inventory.js"></script>
