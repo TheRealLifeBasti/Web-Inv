@@ -7,18 +7,60 @@
 </head>
 <body>
 <div class="container">
-    <div class="player-selection">
-        <select id="playerSelect">
-            <option value="">Spieler auswählen...</option>
-        </select>
+    <div class="sidebar-left">
+        <div class="creative-menu">
+            <h3>Items geben</h3>
+            <div class="item-search">
+                <input type="text" id="itemSearch" placeholder="Suche Items...">
+            </div>
+            <div id="itemList" class="item-list"></div>
+        </div>
     </div>
 
-    <div class="inventory-section">
-        <div class="inventory-tabs">
-            <button class="tab-button active" onclick="switchTab('inventory')">Inventar</button>
-            <button class="tab-button" onclick="switchTab('enderchest')">Endertruhe</button>
+    <div class="main-content">
+        <div class="player-selection">
+            <select id="playerSelect">
+                <option value="">Spieler auswählen...</option>
+            </select>
         </div>
-        <div id="inventory" class="inventory-grid"></div>
+
+        <div class="inventory-section">
+            <div class="inventory-tabs">
+                <button class="tab-button active" onclick="switchTab('inventory')">Inventar</button>
+                <button class="tab-button" onclick="switchTab('enderchest')">Endertruhe</button>
+            </div>
+            <div id="inventory" class="inventory-grid"></div>
+
+            <div class="amount-changer">
+                <div class="amount-info">
+                    <span id="amountDisplay">Kein Slot ausgewählt</span>
+                </div>
+                <div class="amount-controls">
+                    <input type="number" id="amountInput" min="1" max="64" value="1" disabled>
+                    <button onclick="changeAmount()" class="amount-btn">Anzahl ändern</button>
+                </div>
+            </div>
+
+            <div class="inventory-footer">
+                <button id="clearInventoryBtn" class="clear-btn">Inventar leeren</button>
+                <div class="trash-bin" id="trashBin">
+                    <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/lava_bucket.png" alt="Mülleimer">
+                    <span>Mülleimer</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+    <div class="modal-content">
+        <h3>Inventar leeren?</h3>
+        <p>Bist du sicher, dass du das gesamte Inventar leeren möchtest? Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        <div class="modal-buttons">
+            <button id="cancelClear" class="cancel-btn">Abbrechen</button>
+            <button id="confirmClear" class="confirm-btn">Löschen</button>
+        </div>
     </div>
 </div>
 

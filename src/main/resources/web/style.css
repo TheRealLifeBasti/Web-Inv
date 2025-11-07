@@ -11,9 +11,21 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  display: flex;
+  max-width: 1600px;
   width: 100%;
   padding: 20px;
+  gap: 20px;
+}
+
+.sidebar-left {
+  width: 450px;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
 }
 
 .player-selection {
@@ -44,11 +56,263 @@ body {
   box-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
 }
 
+.creative-menu {
+  background: #252525;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  height: fit-content;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.creative-menu h3 {
+  margin: 0 0 15px 0;
+  color: #ffffff;
+  font-size: 18px;
+}
+
+.item-search {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+#itemSearch {
+  width: 90%;
+  max-width: 300px;
+  padding: 8px 12px;
+  background: #2d2d2d;
+  border: 2px solid #404040;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+#itemSearch:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.item-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: grid;
+  grid-template-columns: repeat(7, 40px);
+  gap: 8px;
+  padding-right: 5px;
+  max-height: 700px;
+  justify-content: center;
+}
+
+.item-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.item-list::-webkit-scrollbar-track {
+  background: #2d2d2d;
+  border-radius: 4px;
+}
+
+.item-list::-webkit-scrollbar-thumb {
+  background: #505050;
+  border-radius: 4px;
+}
+
+.item-list::-webkit-scrollbar-thumb:hover {
+  background: #606060;
+}
+
+.trash-bin {
+  background: #2d2d2d;
+  border: 2px solid #404040;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.trash-bin:hover {
+  background: #353535;
+  border-color: #505050;
+  transform: scale(1.02);
+}
+
+.trash-bin img {
+  width: 48px;
+  height: 48px;
+  display: block;
+  margin: 0 auto 8px;
+  filter: drop-shadow(0 0 8px rgba(255, 100, 0, 0.5));
+}
+
+.trash-bin span {
+  color: #ff6b35;
+  font-weight: bold;
+  font-size: 12px;
+}
+
 .inventory-section {
   background: #252525;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.amount-changer {
+  background: #2d2d2d;
+  border: 2px solid #404040;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 500px;
+  text-align: center;
+}
+
+.amount-info {
+  margin-bottom: 12px;
+  color: #cccccc;
+  font-size: 14px;
+}
+
+.amount-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+#amountInput {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: 2px solid #404040;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  width: 80px;
+  text-align: center;
+}
+
+#amountInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+#amountInput:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.amount-btn {
+  background: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.amount-btn:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.inventory-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #404040;
+}
+
+.clear-btn {
+  background: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background: #252525;
+  margin: 15% auto;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin: 0 0 15px 0;
+  color: #ffffff;
+}
+
+.modal-content p {
+  margin: 0 0 25px 0;
+  color: #cccccc;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+  background: #5a6268;
+}
+
+.confirm-btn {
+  background: #dc3545;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.confirm-btn:hover {
+  background: #c82333;
 }
 
 .inventory-tabs {
@@ -97,14 +361,19 @@ body {
   justify-content: center;
   position: relative;
   transition: all 0.2s ease;
-  cursor: grab;
+  cursor: pointer;
 }
 
-.slot:hover {
+.slot:hover, .slot.drag-over {
   background: #353535;
   border-color: #505050;
   transform: scale(1.05);
   z-index: 10;
+}
+
+.slot.selected {
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
 
 .slot.dragging {
@@ -161,5 +430,62 @@ body {
 }
 
 .slot:hover .item-tooltip {
+  opacity: 1;
+}
+
+.creative-item {
+  width: 40px;
+  height: 40px;
+  background: #2d2d2d;
+  border: 1px solid #404040;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.creative-item:hover {
+  background: #353535;
+  border-color: #505050;
+  transform: scale(1.1);
+}
+
+.creative-item.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg) scale(1.1);
+}
+
+.creative-item {
+  position: relative;
+}
+
+.creative-item img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.creative-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+  margin-bottom: 5px;
+}
+
+.creative-item:hover .creative-tooltip {
   opacity: 1;
 }
