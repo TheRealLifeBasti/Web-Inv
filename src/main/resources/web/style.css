@@ -99,12 +99,13 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  display: grid;
-  grid-template-columns: repeat(7, 40px);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  padding-right: 5px;
+  padding: 10px;
   max-height: 700px;
   justify-content: center;
+  align-content: flex-start;
 }
 
 .item-list::-webkit-scrollbar {
@@ -488,4 +489,24 @@ body {
 
 .creative-item:hover .creative-tooltip {
   opacity: 1;
+}
+
+.modal-input {
+  width: 100%;
+  max-width: 200px;
+  padding: 10px 15px;
+  background: #2d2d2d;
+  border: 2px solid #404040;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 16px;
+  text-align: center;
+  margin: 15px auto;
+  display: block;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
 }

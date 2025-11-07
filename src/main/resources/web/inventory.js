@@ -128,25 +128,39 @@ function createSlot(item, index, online) {
     if (item) {
         const img = document.createElement("img");
         const itemName = item.type.toLowerCase();
+
+        // Bessere Textur-Fallback-Chain
         img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/${itemName}.png`;
         img.alt = item.type;
+
+        let fallbackAttempt = 0;
         img.onerror = () => {
-            img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/block/${itemName}.png`;
-            img.onerror = () => {
-                if (itemName === 'ender_chest') {
-                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/block/ender_chest.png`;
-                    img.onerror = () => { img.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png'; };
+            fallbackAttempt++;
+            if (fallbackAttempt === 1) {
+                // Versuch 2: Block texture
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/block/${itemName}.png`;
+            } else if (fallbackAttempt === 2) {
+                // Versuch 3: Spezielle Fälle
+                if (itemName.includes('_spawn_egg')) {
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/spawn_egg.png`;
+                } else if (itemName.includes('chest') && !itemName.includes('chestplate')) {
+                    // Für alle Chest-Varianten
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/chest/normal.png`;
+                } else if (itemName.includes('boat')) {
+                    const woodType = itemName.split('_')[0];
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/boat/${woodType}.png`;
+                } else if (itemName.includes('minecart')) {
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/minecart.png`;
+                } else if (itemName.includes('bed')) {
+                    const color = itemName.replace('_bed', '');
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/bed/${color}.png`;
                 } else {
-                    if (itemName.includes('_spawn_egg')) {
-                        const entityName = itemName.replace('_spawn_egg', '');
-                        img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/${entityName}.png`;
-                        img.onerror = () => { img.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png'; };
-                    } else {
-                        img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/${itemName}.png`;
-                        img.onerror = () => { img.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png'; };
-                    }
+                    img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png`;
                 }
-            };
+            } else {
+                // Final fallback
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png`;
+            }
         };
 
         img.style.width = "32px";
@@ -211,39 +225,34 @@ function createSlot(item, index, online) {
                     return;
                 }
 
-                // Popup für Anzahl
-                const amount = prompt("Anzahl (1-64):", "1");
-                if (amount === null) return; // Abgebrochen
+                // Custom Popup für Anzahl
+                showAmountModal(dragData.type, async (amount) => {
+                    if (amount === null) return;
 
-                const num = parseInt(amount);
-                if (isNaN(num) || num < 1 || num > 64) {
-                    alert("Bitte gib eine Zahl zwischen 1 und 64 ein!");
-                    return;
-                }
-
-                if (inventory[index]) {
-                    if (inventory[index].type === dragData.type && inventory[index].count < 64) {
-                        inventory[index].count = Math.min(64, inventory[index].count + num);
+                    if (inventory[index]) {
+                        if (inventory[index].type === dragData.type && inventory[index].count < 64) {
+                            inventory[index].count = Math.min(64, inventory[index].count + amount);
+                        } else {
+                            inventory[index] = { type: dragData.type, count: amount };
+                        }
                     } else {
-                        inventory[index] = { type: dragData.type, count: num };
+                        inventory[index] = { type: dragData.type, count: amount };
                     }
-                } else {
-                    inventory[index] = { type: dragData.type, count: num };
-                }
 
-                const invDiv = document.getElementById("inventory");
-                const slots = invDiv.children;
-                if (slots[index]) slots[index].replaceWith(createSlot(inventory[index], index, online));
+                    const invDiv = document.getElementById("inventory");
+                    const slots = invDiv.children;
+                    if (slots[index]) slots[index].replaceWith(createSlot(inventory[index], index, online));
 
-                await fetch("/api/inventory/update", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        player: currentPlayer,
-                        type: currentType,
-                        slot: index,
-                        item: inventory[index] ? { type: inventory[index].type, amount: inventory[index].count } : null
-                    })
+                    await fetch("/api/inventory/update", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            player: currentPlayer,
+                            type: currentType,
+                            slot: index,
+                            item: inventory[index] ? { type: inventory[index].type, amount: inventory[index].count } : null
+                        })
+                    });
                 });
             } else {
                 const from = dragData.index;
@@ -367,9 +376,31 @@ function createCreativeItem(itemName) {
     const img = document.createElement("img");
     img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/${itemName}.png`;
     img.alt = itemName;
+
+    let fallbackAttempt = 0;
     img.onerror = () => {
-        img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/block/${itemName}.png`;
-        img.onerror = () => { img.src = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png'; };
+        fallbackAttempt++;
+        if (fallbackAttempt === 1) {
+            img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/block/${itemName}.png`;
+        } else if (fallbackAttempt === 2) {
+            if (itemName.includes('_spawn_egg')) {
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/spawn_egg.png`;
+            } else if (itemName.includes('chest') && !itemName.includes('chestplate')) {
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/chest/normal.png`;
+            } else if (itemName.includes('boat')) {
+                const woodType = itemName.split('_')[0];
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/boat/${woodType}.png`;
+            } else if (itemName.includes('minecart')) {
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/minecart.png`;
+            } else if (itemName.includes('bed')) {
+                const color = itemName.replace('_bed', '');
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/entity/bed/${color}.png`;
+            } else {
+                img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png`;
+            }
+        } else {
+            img.src = `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/barrier.png`;
+        }
     };
 
     img.style.width = "32px";
@@ -503,6 +534,52 @@ function setupItemSearch() {
             }
         }
     });
+}
+
+function showAmountModal(itemType, callback) {
+    const modal = document.getElementById("amountModal");
+    const itemDisplay = document.getElementById("itemNameDisplay");
+    const amountInput = document.getElementById("modalAmountInput");
+    const cancelBtn = document.getElementById("cancelAmount");
+    const confirmBtn = document.getElementById("confirmAmount");
+
+    itemDisplay.textContent = itemType.replace(/_/g, ' ');
+    amountInput.value = 1;
+    modal.style.display = "block";
+    amountInput.focus();
+    amountInput.select();
+
+    const handleCancel = () => {
+        modal.style.display = "none";
+        callback(null);
+        cleanup();
+    };
+
+    const handleConfirm = () => {
+        const amount = parseInt(amountInput.value);
+        if (isNaN(amount) || amount < 1 || amount > 64) {
+            alert("Bitte gib eine Zahl zwischen 1 und 64 ein!");
+            return;
+        }
+        modal.style.display = "none";
+        callback(amount);
+        cleanup();
+    };
+
+    const handleEnter = (e) => {
+        if (e.key === "Enter") handleConfirm();
+        if (e.key === "Escape") handleCancel();
+    };
+
+    const cleanup = () => {
+        cancelBtn.removeEventListener("click", handleCancel);
+        confirmBtn.removeEventListener("click", handleConfirm);
+        amountInput.removeEventListener("keydown", handleEnter);
+    };
+
+    cancelBtn.addEventListener("click", handleCancel);
+    confirmBtn.addEventListener("click", handleConfirm);
+    amountInput.addEventListener("keydown", handleEnter);
 }
 
 function updateAmountChanger() {
